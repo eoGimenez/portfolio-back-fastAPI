@@ -8,6 +8,7 @@ fastapi = {extras = ["all"], version = "*"}
 python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 pymongo = "*"
+pyjwt = "*"
 
 [dev-packages]
 autopep8 = "*"
