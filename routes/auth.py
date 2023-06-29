@@ -52,11 +52,19 @@ auth_handler = AuthHandler()
 
 @router.post('/signup', status_code=201)
 async def create_user(user_details: user.User):
-    user = db_client.test.users.find_one({"email": user_details.email})
-    if (user):
+    if (db_client.test.users.find_one({"email": user_details.email})):
         raise HTTPException(
             status_code=400, detail='User is already regitered')
     hashed_pass = auth_handler.get_password_hash(user_details.password)
     db_client.test.users.insert_one(
         {"email": user_details.email, "password": hashed_pass, "usernmame": user_details.username})
     return {"message": "creado wach"}
+
+
+@router.post('/login', status_code=201)
+async def login_user(user_details: user.User):
+    user = db_client.test.users.find_one({"email": user_details.email})
+    if (not user or (not auth_handler.verify_password(user_details.password, user['password']))):
+        raise HTTPException(status_code=401, detail='Wrong credencials')
+    token = auth_handler.encode_token(user['email'])
+    return {'token': token}
