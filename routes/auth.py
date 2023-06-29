@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 import jwt
 from fastapi import APIRouter, Security, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from models.user import User
+from models.user import user
 from db.config import db_client
 
 router = APIRouter(prefix='/api/auth', tags=['Auth'])
@@ -12,7 +12,7 @@ router = APIRouter(prefix='/api/auth', tags=['Auth'])
 
 class AuthHandler():
     security = HTTPBearer()
-    pwd_context = CryptContext(schemes=["bycrypt"], deprecated="auto")
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     secret = os.environ.get("SECRET")
 
     def get_password_hash(self, password):
@@ -45,10 +45,18 @@ class AuthHandler():
 
     def auth_wrapper(self, auth: HTTPAuthorizationCredentials = Security(security)):
         return self.decode_token(auth.credentials)
-# @router.post('/signup')
-# async def create_user(form: OAuth2PasswordRequestForm = Depends()):
-#     if isinstance(db_client.fastAPIDOS.users.get(form.email)):
-#         return {"message": "El usuario ya existe"}
-#     hashed_pass = bcrypt.encrypt(form.password)
-#     db_client.fastAPIDOS.users.insert_one(
-#         {"email": form.email, "password": hashed_pass, "userName": form.username})
+
+
+auth_handler = AuthHandler()
+
+
+@router.post('/signup', status_code=201)
+async def create_user(user_details: user.User):
+    user = db_client.test.users.find_one({"email": user_details.email})
+    if (user):
+        raise HTTPException(
+            status_code=400, detail='User is already regitered')
+    hashed_pass = auth_handler.get_password_hash(user_details.password)
+    db_client.test.users.insert_one(
+        {"email": user_details.email, "password": hashed_pass, "usernmame": user_details.username})
+    return {"message": "creado wach"}
