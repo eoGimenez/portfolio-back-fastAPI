@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 import jwt
 from fastapi import APIRouter, Depends, Security, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from models.user import user
+from schemas.user import User
 from db.config import db_client
 
 router = APIRouter(prefix='/api/auth', tags=['Auth'])
@@ -51,7 +51,7 @@ auth_handler = AuthHandler()
 
 
 @router.post('/signup', status_code=201)
-async def create_user(user_details: user.User):
+async def create_user(user_details: User):
     if db_client.test.users.find_one({"email": user_details.email}):
         raise HTTPException(
             status_code=400, detail='User is already regitered')
@@ -62,7 +62,7 @@ async def create_user(user_details: user.User):
 
 
 @router.post('/login', status_code=200)
-async def login_user(user_details: user.User):
+async def login_user(user_details: User):
     user = db_client.test.users.find_one({"email": user_details.email})
     if (not user or (not auth_handler.verify_password(user_details.password, user['password']))):
         raise HTTPException(status_code=401, detail='Wrong credencials')
@@ -72,5 +72,5 @@ async def login_user(user_details: user.User):
 
 @router.get('/verify', status_code=201)
 async def verify_token(email=Depends(auth_handler.auth_wrapper)):
-    user_tok: user.User = db_client.test.users.find_one({"email": email})
-    return user.User(**user_tok)
+    user_tok: User = db_client.test.users.find_one({"email": email})
+    return User(**user_tok)
