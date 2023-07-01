@@ -1,5 +1,5 @@
 from pydantic import BaseModel, HttpUrl
-from .user import User
+# from .user import User
 
 
 class UrlGit(BaseModel):
@@ -14,7 +14,7 @@ class Project(BaseModel):
     technologies: list
     urlGit: list[UrlGit]
     image: HttpUrl | None = None
-    # author: set = User
+    author: dict
 
 
 """ {
