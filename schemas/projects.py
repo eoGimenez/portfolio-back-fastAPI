@@ -4,14 +4,14 @@ from .user import User
 
 class UrlGit(BaseModel):
     label: str
-    url: HttpUrl
+    url: str
 
 
 class Project(BaseModel):
     title: str
     description: str
     secDescription: str
-    technologies: set[str] = []
-    urlGit: UrlGit = []
-    image: HttpUrl
-    author: set = User
+    technologies: list
+    urlGit: list[UrlGit]
+    image: HttpUrl | None = None
+    # author: set = User
