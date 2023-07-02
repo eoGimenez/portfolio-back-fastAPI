@@ -1,4 +1,6 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, Field
+from typing import Optional
+from bson import ObjectId
 # from .user import User
 
 
@@ -8,31 +10,37 @@ class UrlGit(BaseModel):
 
 
 class Project(BaseModel):
+    _id: ObjectId
     title: str
     description: str
     secDescription: str
-    technologies: list
-    urlGit: list[UrlGit]
-    image: HttpUrl | None = None
-    author: dict
+    technologies: list[str] = Field(default_factory=list)
+    urlGit: list[dict] = Field(default_factory=list)
+    image: Optional[HttpUrl]
+    author: Optional[dict]
+
+
+# def project_schema(projects) -> list:
+#     return [project == Project(**project) for project in projects]
 
 
 """ {
     "title": "test",
     "description": "descripcion",
     "secDescription": "segunda des",
-    "technologies": ["test1", "testw", "akka"],
+    "technologies": ["PROBANDO", "QUE ONDA", "akka"],
     "urlGit": [
       {
-       "label": "titulo imagen",
+       "label": "titulo aaaaaaaaaaaimagen",
        "url": "https://www.google.com"
         
       },
          {
-       "label": "titul SEGUNDA imagen",
+       "label": "titul SEGUssssssssNDA imagen",
        "url": "https://www.youtube.com"
         
       }
         ],
-    "image": "https://res.cloudinary.com/dbld4vcec/image/upload/v1685561602/projects/vab1fxizdea2tryposca.png"
+    "image": "https://res.cloudinary.com/dbld4vcec/image/upload/v1685561602/projects/vab1fxizdea2tryposca.png",
+    "author": {"email": "Eugeni"}
 } """
