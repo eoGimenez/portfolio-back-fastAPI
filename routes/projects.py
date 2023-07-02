@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Security, HTTPException
 from pymongo.collection import ReturnDocument
-# from bson import ObjectId
-from schemas.projects import Project
+from bson.objectid import ObjectId
+from schemas.projects import Project, PyObjectId
 from db.config import db_client
 
 router = APIRouter(prefix='/api/projects', tags=['Projects'])
@@ -27,7 +27,6 @@ async def new_project(project_details: Project):
             status_code=400, detail="Ya existe un proyecto con ese titulo!")
     url_git = []
     for url in project_details.urlGit:
-        print(url)
         url_dic = {"label": url["label"], "url": url["url"]}
         url_git.append(url_dic)
     db_client.test.project.insert_one({"title": project_details.title, "description": project_details.description, "secDescription": project_details.secDescription,
@@ -37,12 +36,9 @@ async def new_project(project_details: Project):
 
 @router.put('/{id}', status_code=200)
 async def update_project(id: str, updated_data: Project):
-    # project_id = ObjectId(id.strip())
-    updated_data = {"$set": updated_data.dict()}
-    project_to_update = db_client.test.project.find_one_and_update(
-        {"_id": id.strip()}, updated_data, return_document=ReturnDocument.AFTER)
-    # updated = db_client.test.project.find_one({"_id": id.strip()})
-    # if project_to_update is None:
-    #     raise HTTPException(status_code=404, detail="No se encontro el proyecto")
+    project_id = PyObjectId(id)
+    # updated_data = {"$set": updated_data.dict()}
+    project_to_update: Project = db_client.test.project.find_one_and_update(
+        {"_id": project_id}, {"$set": updated_data.dict()}, return_document=ReturnDocument.AFTER)
     print(project_to_update)
-    return {project_to_update}
+    return project_to_update
