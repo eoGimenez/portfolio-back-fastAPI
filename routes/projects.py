@@ -40,5 +40,5 @@ async def update_project(id: str, updated_data: Project):
     # updated_data = {"$set": updated_data.dict()}
     project_to_update: Project = db_client.test.project.find_one_and_update(
         {"_id": project_id}, {"$set": updated_data.dict()}, return_document=ReturnDocument.AFTER)
-    print(project_to_update)
-    return project_to_update
+    print(project_to_update["id"])
+    return {"_id": id.strip(), "title": project_to_update["title"], "description": project_to_update["description"], "secDescription": project_to_update["secDescription"], "technologies": project_to_update["technologies"], "urlGit": project_to_update["urlGit"], "image": project_to_update["image"], "author": project_to_update["author"]}
