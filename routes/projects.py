@@ -16,8 +16,8 @@ async def get_projects():
             status_code=400, detail='No hay proyectos en la base de datos')
     for x in projects_db:
         aux_project = Project(**x)
+        aux_project.id = str(x["_id"])
         projects_list.append(aux_project)
-    print(projects_list)
     return projects_list
 
 
@@ -40,5 +40,4 @@ async def update_project(id: str, updated_data: Project):
     project_id = ObjectId(id)
     project_to_update: Project = db_client.test.project.find_one_and_update(
         {"_id": project_id}, {"$set": updated_data.dict()}, return_document=ReturnDocument.AFTER)
-    # return {"_id": id.strip(), "title": project_to_update["title"], "description": project_to_update["description"], "secDescription": project_to_update["secDescription"], "technologies": project_to_update["technologies"], "urlGit": project_to_update["urlGit"], "image": project_to_update["image"], "author": project_to_update["author"]}
-    return project_to_update
+    return {"_id": str(project_id), "title": project_to_update["title"], "description": project_to_update["description"], "secDescription": project_to_update["secDescription"], "technologies": project_to_update["technologies"], "urlGit": project_to_update["urlGit"], "image": project_to_update["image"], "author": project_to_update["author"]}
