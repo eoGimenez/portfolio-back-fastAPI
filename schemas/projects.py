@@ -1,24 +1,24 @@
 from pydantic import BaseModel, HttpUrl, Field
 from typing import Optional
-from bson import ObjectId
-from bson.objectid import ObjectId
+# from bson import ObjectId
+# from bson.objectid import ObjectId
 # from .user import User
 
 
-class PyObjectId(ObjectId):
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+# class PyObjectId(ObjectId):
+#     @classmethod
+#     def __get_validators__(cls):
+#         yield cls.validate
 
-    @classmethod
-    def validate(cls, var):
-        if not ObjectId.is_valid(var):
-            raise ValueError("ObjectId Invalido")
-        return ObjectId(var)
+#     @classmethod
+#     def validate(cls, var):
+#         if not ObjectId.is_valid(var):
+#             raise ValueError("ObjectId Invalido")
+#         return ObjectId(var)
 
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(type="string")
+#     @classmethod
+#     def __modify_schema__(cls, field_schema):
+#         field_schema.update(type="string")
 
 
 class UrlGit(BaseModel):
@@ -27,7 +27,7 @@ class UrlGit(BaseModel):
 
 
 class Project(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    # id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     title: str
     description: str
     secDescription: str
@@ -41,7 +41,10 @@ class Project(BaseModel):
 #     return [project == Project(**project) for project in projects]
 
 
-""" {
+""" 
+PARA ENVIAR PETICIONES DE PRUEBA A LA API
+
+{
     "title": "test",
     "description": "descripcion",
     "secDescription": "segunda des",

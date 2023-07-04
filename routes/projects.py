@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Security, HTTPException
 from pymongo.collection import ReturnDocument
 from bson.objectid import ObjectId
-from schemas.projects import Project, PyObjectId
+from schemas.projects import Project
 from db.config import db_client
 
 router = APIRouter(prefix='/api/projects', tags=['Projects'])
@@ -17,6 +17,7 @@ async def get_projects():
     for x in projects_db:
         aux_project = Project(**x)
         projects_list.append(aux_project)
+    print(projects_list)
     return projects_list
 
 
@@ -36,9 +37,8 @@ async def new_project(project_details: Project):
 
 @router.put('/{id}', status_code=200)
 async def update_project(id: str, updated_data: Project):
-    project_id = PyObjectId(id)
-    # updated_data = {"$set": updated_data.dict()}
+    project_id = ObjectId(id)
     project_to_update: Project = db_client.test.project.find_one_and_update(
         {"_id": project_id}, {"$set": updated_data.dict()}, return_document=ReturnDocument.AFTER)
-    print(project_to_update["id"])
-    return {"_id": id.strip(), "title": project_to_update["title"], "description": project_to_update["description"], "secDescription": project_to_update["secDescription"], "technologies": project_to_update["technologies"], "urlGit": project_to_update["urlGit"], "image": project_to_update["image"], "author": project_to_update["author"]}
+    # return {"_id": id.strip(), "title": project_to_update["title"], "description": project_to_update["description"], "secDescription": project_to_update["secDescription"], "technologies": project_to_update["technologies"], "urlGit": project_to_update["urlGit"], "image": project_to_update["image"], "author": project_to_update["author"]}
+    return project_to_update
