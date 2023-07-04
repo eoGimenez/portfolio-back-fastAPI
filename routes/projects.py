@@ -41,3 +41,10 @@ async def update_project(id: str, updated_data: Project):
     project_to_update: Project = db_client.test.project.find_one_and_update(
         {"_id": project_id}, {"$set": updated_data.dict()}, return_document=ReturnDocument.AFTER)
     return {"_id": str(project_id), "title": project_to_update["title"], "description": project_to_update["description"], "secDescription": project_to_update["secDescription"], "technologies": project_to_update["technologies"], "urlGit": project_to_update["urlGit"], "image": project_to_update["image"], "author": project_to_update["author"]}
+
+
+@router.delete('/{id}', status_code=200)
+async def delete_project(id: str):
+    project_id = ObjectId(id)
+    db_client.test.project.find_one_and_delete({"_id": project_id})
+    return {"message": "El proyecto se elimino correctamente!"}
