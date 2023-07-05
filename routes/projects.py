@@ -6,12 +6,6 @@ from db.config import db_client
 
 router = APIRouter(prefix='/api/projects', tags=['Projects'])
 
-# class ProjectHandler():
-#     DB_URL = db_client.test.project
-
-# def get_one_project(self, id:str):
-#     return
-
 
 @router.get('/', status_code=200)
 async def get_projects():
@@ -50,7 +44,8 @@ async def new_project(project_details: Project):
         url_git.append(url_dic)
     db_client.test.project.insert_one({"title": project_details.title, "description": project_details.description, "secDescription": project_details.secDescription,
                                        "technologies": project_details.technologies, "urlGit": url_git, "image": project_details.image, "author": project_details.author})
-    return {"message": "Listorti"}
+    del (project_details.id)
+    return [{"message": "Proyecto creado correctamente"}, project_details]
 
 
 @router.put('/{id}', status_code=200)
@@ -64,5 +59,6 @@ async def update_project(id: str, updated_data: Project):
 @router.delete('/{id}', status_code=200)
 async def delete_project(id: str):
     project_id = ObjectId(id)
-    db_client.test.project.find_one_and_delete({"_id": project_id})
-    return {"message": "El proyecto se elimino correctamente!"}
+    result = db_client.test.project.find_one_and_delete(
+        {"_id": project_id}, projection={"_id": 0})
+    return [{"message": "El proyecto se elimino correctamente!"}, result]
