@@ -27,6 +27,18 @@ async def get_projects():
     return projects_list
 
 
+@router.get('/{id}', status_code=200)
+async def get_one_proyect(id: str):
+    project_id = ObjectId(id)
+    project = db_client.test.project.find_one({"_id": project_id})
+    if not project:
+        raise HTTPException(
+            status_code=404, detail='No se encontró ningun proyecto con ese ID, intentelo nuevamente')
+    project["id"] = str(project["_id"])
+    del (project["_id"])
+    return project
+
+
 @router.post('/', status_code=201)
 async def new_project(project_details: Project):
     if db_client.test.projects.find_one({"title": project_details.title}):
