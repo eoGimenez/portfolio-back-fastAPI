@@ -6,18 +6,24 @@ from db.config import db_client
 
 router = APIRouter(prefix='/api/projects', tags=['Projects'])
 
+# class ProjectHandler():
+#     DB_URL = db_client.test.project
+
+# def get_one_project(self, id:str):
+#     return
+
 
 @router.get('/', status_code=200)
 async def get_projects():
     projects_list = []
     projects_db = db_client.test.project.find()
-    if (not projects_db):
-        raise HTTPException(
-            status_code=400, detail='No hay proyectos en la base de datos')
     for x in projects_db:
         aux_project = Project(**x)
         aux_project.id = str(x["_id"])
         projects_list.append(aux_project)
+    if (not bool(projects_list)):
+        raise HTTPException(
+            status_code=400, detail='No hay proyectos en la base de datos')
     return projects_list
 
 
@@ -31,7 +37,7 @@ async def new_project(project_details: Project):
         url_dic = {"label": url["label"], "url": url["url"]}
         url_git.append(url_dic)
     db_client.test.project.insert_one({"title": project_details.title, "description": project_details.description, "secDescription": project_details.secDescription,
-                                      "technologies": project_details.technologies, "urlGit": url_git, "image": project_details.image, "author": project_details.author})
+                                       "technologies": project_details.technologies, "urlGit": url_git, "image": project_details.image, "author": project_details.author})
     return {"message": "Listorti"}
 
 
