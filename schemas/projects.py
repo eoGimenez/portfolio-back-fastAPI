@@ -14,5 +14,5 @@ class Project(BaseModel):
     secDescription: str
     technologies: list[str] = Field(default_factory=list)
     urlGit: list[dict] = Field(default_factory=list)
-    image: Optional[HttpUrl]
+    image: Optional[str]
     author: Optional[dict]
